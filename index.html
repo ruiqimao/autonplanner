@@ -171,6 +171,8 @@
 		<div class="tab-panel" id="keyframes">
 			<div class="keyframes-left-column">
 				<h2>Keyframes</h2>
+				<div class="keyframes-frames">
+				</div>
 			</div>
 			<div class="keyframes-middle-column">
                 <div class="keyframes-toolbar">
@@ -180,7 +182,7 @@
 					<button class="toolbar-button export-autonomous"><img class="icon" src="images/icons/share.png" /> Export</button>
 					<button class="toolbar-button import-autonomous"><img class="icon" src="images/icons/collection.png" /> Import</button>
 					<span class="toolbar-separater">|</span>
-					<button class="toolbar-button save-autonomous" disabled><img class="icon" src="images/icons/save.png" /></button>
+					<button class="toolbar-button save-keyframe" disabled><img class="icon" src="images/icons/save.png" /></button>
 					<button class="toolbar-button play-autonomous"><img class="icon" src="images/icons/play.png" /></button>
                 </div>
 			</div>
@@ -193,6 +195,27 @@
 			</div>
 			<div class="keyframes-right-column">
 				<h2>Properties</h2>
+				<div class="keyframes-properties-pane" id="init">
+					<h3>Starting Position</h3>
+					<div style="padding:1rem;">
+						<select id="keyframes-init-start">
+							<option value="1">Red Driver Side</option>
+							<option value="2">Red Non-Driver Side</option>
+							<option value="3">Blue Driver Side</option>
+							<option value="4">Blue Non-Driver Side</option>
+						</select>
+					</div>
+					<h3>Rotation</h3>
+					<div style="padding:1rem;"><input type="text" class="input-text keyframes-init-rotation" placeholder="Degrees" /></div>
+					<h3>Offset</h3>
+					<div style="padding:1rem;">
+						<h4>X-Offset</h4>
+						<input type="text" class="input-text keyframes-init-xoffset" placeholder="X" />
+						<br /><br />
+						<h4>Y-Offset</h4>
+						<input type="text" class="input-text keyframes-init-yoffset" placeholder="Y" />
+					</div>
+				</div>
 			</div>
 		</div>
 		<div class="toast">Message</div>

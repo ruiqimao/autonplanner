@@ -526,6 +526,65 @@ select {
 	transform:translateX(-50%) translateY(-50%);
 }
 
+.keyframes-frames {
+    width:100%;
+    position:absolute;
+    top:5rem;
+    left:0;
+    right:0;
+    bottom:0;
+    overflow-y:auto;
+}
+
+.keyframes-frame {
+    width:100%;
+    box-sizing:border-box;
+    padding:1rem;
+    cursor:pointer;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    background:rgba(0,0,0,0.04);
+    margin-bottom:0.5rem;
+    font-family:Roboto;
+    font-weight:300;
+}
+
+.keyframes-frame.selected {
+    background:rgba(0,0,0,0.08);
+}
+
+.keyframes-properties-pane {
+	width:100%;
+	display:none;
+	padding-left:1rem;
+	padding-right:1rem;
+}
+
+.keyframes-properties-pane h3 {
+	padding:0;
+}
+
+.keyframes-properties-pane h4 {
+	padding:0;
+	padding-bottom:0.5rem;
+}
+
+.keyframes-properties-pane select {
+	width:100%;
+	font-size:1rem;
+	background:#FFFFFF;
+	border:1px solid #CFCFCF;
+}
+
+.keyframes-properties-pane select:focus {
+	border:1px solid #2097CF;
+}
+
+.keyframes-init-rotation {
+	width:100%;
+}
+
 @media (max-width:960px) {
 	
 	.toolbar-button {

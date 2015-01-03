@@ -3,18 +3,18 @@ var options = {
 	'digitalsensor':['Digital 1','Digital 2','Digital 3','Digital 4','Digital 5','Digital 6','Digital 7','Digital 8','Digital 9','Digital 10','Digital 11','Digital 12']};
 
 var field = [
-	[0,0,0,0,2,0],
-	[0,0,0,0,0,2],
+	[0,0,0,0,3,0],
+	[0,0,0,0,0,4],
 	[0,0,0,0,0,0],
 	[0,0,0,0,0,0],
 	[1,0,0,0,0,0],
-	[0,1,0,0,0,0]
+	[0,2,0,0,0,0]
 ];
 
 var components = [];
 var selectedComponent = 0;
 
-var keyframes = [{'type':'init'}];
+var keyframes = [{'type':'init','properties':{'start':1}}];
 var selectedKeyframe = 0;
 
 function throwError(error) {
@@ -42,6 +42,11 @@ function getComponent(name) {
 		if(component['name'] == name) return [i,component];
 	}
 	return false;
+}
+
+function getProperty(properties,key,defaultvalue) {
+	if(properties[key] == undefined) return defaultvalue;
+	return properties[key];
 }
 
 function updateComponentList() {
@@ -230,28 +235,143 @@ function displayConfigComponentPane() {
     }
 }
 
+function updateKeyframeList() {
+    $(".keyframes-frames").html("");
+    for(var i = 0; i < keyframes.length; i ++) {
+        var frame = keyframes[i];
+        var frameDisplay = $('<div class="keyframes-frame">Frame '+(i+1)+'</div>');
+        if(i == selectedKeyframe) frameDisplay.addClass("selected");
+        frameDisplay.click(function() {
+            var frameIndex = $(this).index();
+            var frame = keyframes[frameIndex];
+            selectedKeyframe = frameIndex;
+            $(".keyframes-frame.selected").removeClass("selected");
+            $(this).addClass("selected");
+            displayKeyframe();
+        });
+        $(".keyframes-frames").append(frameDisplay);
+    }
+    if(keyframes.length <= 1) $(".delete-keyframe").attr("disabled",true); else $(".delete-keyframe").removeAttr("disabled");
+    if(selectedKeyframe >= keyframes.length) $(".save-keyframe").attr("disabled",true); else $(".save-keyframe").removeAttr("disabled");
+    displayKeyframe();
+}
+
+function displayKeyframe() {
+	var keyframe = keyframes[selectedKeyframe];
+	var type = keyframe['type'];
+	$(".keyframes-properties-pane").hide();
+	$("#"+type).show();
+	if(type == 'init') {
+		var properties = keyframe['properties'];
+		var startingTile = getProperty(properties,'start',1);
+		var rotation = getProperty(properties,'rotation',0.0);
+		var xoffset = getProperty(properties,'xoffset',0.0);
+		var yoffset = getProperty(properties,'yoffset',0.0);
+		$("#keyframes-init-start").val(startingTile);
+		$(".keyframes-init-rotation").val(rotation);
+		$(".keyframes-init-xoffset").val(xoffset);
+		$(".keyframes-init-yoffset").val(yoffset);
+	}
+}
+
+$(".new-keyframe").click(function() {
+	keyframes.push({'type':'pid','properties':{}});
+    selectedKeyframe = keyframes.length-1;
+    updateKeyframeList();
+});
+
+$(".delete-keyframe").click(function() {
+    if(selectedKeyframe >= keyframes.length || selectedKeyframe == 0) return;
+    keyframes.splice(selectedKeyframe,1);
+    if(selectedKeyframe >= keyframes.length) selectedKeyframe = keyframes.length-1;
+    if(selectedKeyframe < 0) selectedKeyframe = 0;
+    updateKeyframeList();
+});
+
+$("#keyframes-init-start").on('change',function() {
+	keyframes[0]['properties']['start'] = parseInt($(this).val());
+	moveRobot();
+});
+
+$(".keyframes-init-rotation").on('change',function() {
+	var value = $(this).val();
+	if(isNaN(value)) value = 0;
+	if(parseFloat(value) < 0 || parseFloat(value) >= 360) value = 0;
+	$(this).val(value);
+	keyframes[0]['properties']['rotation'] = parseFloat($(this).val());
+	moveRobot();
+});
+
+$(".keyframes-init-xoffset").on('change',function() {
+	var value = $(this).val();
+	if(isNaN(value)) value = 0;
+	$(this).val(value);
+	keyframes[0]['properties']['xoffset'] = parseFloat($(this).val());
+	moveRobot();
+});
+
+$(".keyframes-init-yoffset").on('change',function() {
+    var value = $(this).val();
+    if(isNaN(value)) value = 0;
+    $(this).val(value);
+    keyframes[0]['properties']['yoffset'] = parseFloat($(this).val());
+    moveRobot();
+});
+
+function moveRobot() {
+	var robot = $(".keyframes-field-robot");
+    var rx = 0.0;
+    var ry = 0.0;
+    var rr = 0.0;
+    var initProperties = keyframes[0]['properties'];
+    var startingTile = getProperty(initProperties,'start',1);
+    switch(startingTile) {
+        case 1: {
+            rx = 12;
+            ry = 108;
+            break;
+        }
+        case 2: {
+            rx = 36;
+            ry = 132;
+			break;
+        }
+		case 3: {
+			rx = 108;
+			ry = 12;
+			break;
+		}
+		case 4: {
+			rx = 132;
+			ry = 36;
+			break;
+		}
+    }
+	rr = getProperty(initProperties,'rotation',0.0);
+	rx += getProperty(initProperties,'xoffset',0.0);
+	ry += getProperty(initProperties,'yoffset',0.0);
+	robot.css({'left':(rx/144*100-6.2625)+'%','top':(ry/144*100-6.2625)+'%'});
+	rotate(robot,rr);
+}
+
 function generateField() {
 	$(".keyframes-field-tiles").empty();
-	var robot = $('<div class="keyframes-field-robot"><i class="glyphicon glyphicon-arrow-right"></i></div>');
+	var robot = $('<div class="keyframes-field-robot"><i class="glyphicon glyphicon-arrow-up"></i></div>');
 	$(".keyframes-field-tiles").append(robot);
+	moveRobot();
 	for(var i = 0; i < 6; i ++) {
 		for(var j = 0; j < 6; j ++) {
 			var element = field[j][i];
 			var tile = $('<div class="keyframes-field-tile"></div>');
-			switch(element) {
-				case 0: {
-					var tileColor = (i%2 == j%2)?'#DDDDDD':'#D4D4D4';
-					tile.css({'background':tileColor});
-					break;
-				}
-				case 1: {
-					tile.css({'background':'#CC6666'});
-					break;
-				}
-				case 2: {
-					tile.css({'background':'#6666CC'});
-					break;
-				}
+			if(element == 0) {
+				var tileColor = (i%2 == j%2)?'#DDDDDD':'#D4D4D4';
+				tile.css({'background':tileColor})
+			}
+			if(element == 1 || element == 2) {
+				tile.css({'background':'#CC6666'});
+			}
+			if(element == 3 || element == 4) {
+				tile.css({'background':'#6666CC'});
 			}
 			tile.css({'top':j*16.7+'%','left':i*16.7+'%'});
 			$(".keyframes-field-tiles").append(tile);
@@ -323,4 +443,5 @@ $(".tab").click(function() {
 
 switchTab();
 updateComponentList();
+updateKeyframeList();
 generateField();
