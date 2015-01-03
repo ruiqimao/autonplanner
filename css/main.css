@@ -32,6 +32,10 @@ h2 {
 	color:#333333;
 }
 
+.center {
+	text-align:center;
+}
+
 .icon {
 	height:1rem;
 	vertical-align:-0.2rem;
@@ -70,12 +74,30 @@ h2 {
 	background:#F0F0F0;
 }
 
+.toolbar-button:disabled {
+	background:#F4F4F4;
+	color:#BBBBBB;
+}
+
 .toolbar-separater {
 	font-family:Roboto;
 	font-weight:100;
 	padding-left:0.5rem;
 	padding-right:0.5rem;
 	color:#888888;
+}
+
+.input-text {
+	padding:0.5rem;
+	border:1px solid #CFCFCF;
+	font-family:Roboto;
+	font-size:1rem;
+	font-weight:300;
+	outline:none;
+}
+
+.input-text:focus {
+	border:1px solid #2097CF;
 }
 
 .header {
@@ -132,12 +154,36 @@ h2 {
 	display:none;
 }
 
+.toast {
+	position:absolute;
+	left:50%;
+	bottom:1rem;
+	height:2rem;
+	-webkit-transform: translateX(-50%);
+	-ms-transform: translateX(-50%);
+	transform: translateX(-50%);
+	line-height:2rem;
+	font-size:1rem;
+	font-family:Roboto;
+	font-weight:300;
+	padding-left:1rem;
+	padding-right:1rem;
+	background:rgba(0,0,0,0.5);
+	color:#FFFFFF;
+	display:none;
+}
+
+.toast.error {
+	background:rgba(200,0,0,0.5);
+}
+
 .config-left-column {
 	float:left;
 	width:20%;
 	height:100%;
 	background:#FAFAFA;
 	box-sizing:border-box;
+	position:relative;
 }
 
 .config-right-column {
@@ -146,10 +192,17 @@ h2 {
 	height:100%;
 	border-left:1px solid #CACACA;
 	box-sizing:border-box;
+	position:relative;
 }
 
 .config-components {
 	width:100%;
+	position:absolute;
+	top:5rem;
+	left:0;
+	right:0;
+	bottom:0;
+	overflow-y:auto;
 }
 
 .config-component {
@@ -179,6 +232,75 @@ h2 {
 	line-height:2.8rem;
 	padding-left:0.5rem;
 	padding-right:0.5rem;
+}
+
+.config-component-settings {
+	position:absolute;
+	top:3rem;
+	left:0;
+	right:0;
+	bottom:0;
+	display:none;
+	padding:1rem;
+}
+
+.config-component-blank {
+	position:absolute;
+	top:3rem;
+	left:0;
+	right:0;
+	bottom:0;
+	display:none;
+}
+
+.config-component-blank span {
+	position:absolute;
+	top:50%;
+	left:50%;
+	-webkit-transform: translateX(-50%) translateY(-50%);
+	-ms-transform: translateX(-50%) translateY(-50%);
+	transform: translateX(-50%) translateY(-50%);
+	font-family:Roboto;
+	color:#666666;
+}
+
+.config-component-name {
+	width:100%;
+}
+
+.config-component-types {
+	margin-top:1rem;
+	border:1px solid rgba(0,0,0,0.1);
+	margin-left:1rem;
+	margin-right:1rem;
+}
+
+.config-component-types:after {
+	content:"";
+	display:block;
+	clear:both;
+}
+
+.config-component-type {
+	float:left;
+	width:25%;
+	box-sizing:border-box;
+	text-align:center;
+	padding:0.4rem;
+	background:#F8F8F8;
+	font-weight:300;
+	border-bottom:1px solid rgba(0,0,0,0.1);
+	cursor:pointer;
+	color:#666666;
+	font-family:Roboto;
+}
+
+.config-component-type.selected {
+	background:#F0F0F0;
+}
+
+.config-component-type:active {
+	background:#F0F0F0;
 }
 
 @media (max-width:960px) {
