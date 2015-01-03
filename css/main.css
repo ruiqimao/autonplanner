@@ -354,6 +354,7 @@ select {
 	bottom:0;
 	display:none;
 	padding:1rem;
+	overflow-y:auto;
 }
 
 .config-component-blank {
