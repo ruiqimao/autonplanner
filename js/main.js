@@ -2,6 +2,15 @@ var options = {
 	'motor':['port1','port2','port3','port4','port5','port6','port7','port8','port9','port10'],
 	'digitalsensor':['Digital 1','Digital 2','Digital 3','Digital 4','Digital 5','Digital 6','Digital 7','Digital 8','Digital 9','Digital 10','Digital 11','Digital 12']};
 
+var field = [
+	[0,0,0,0,2,0],
+	[0,0,0,0,0,2],
+	[0,0,0,0,0,0],
+	[0,0,0,0,0,0],
+	[1,0,0,0,0,0],
+	[0,1,0,0,0,0]
+];
+
 var components = [];
 var selectedComponent = 0;
 
@@ -15,6 +24,13 @@ function showMessage(message) {
 	$(".toast").removeClass("error");
 	$(".toast").text(message);
 	if(!$(".toast").is(":animated") && !$(".toast").is(":visible")) $(".toast").fadeIn(500).delay(2000).fadeOut(500);
+}
+
+function rotate(element,degrees) {
+	element.css({
+		'-webkit-transform':'rotate('+degrees+'deg)',
+		'-ms-transform':'rotate('+degrees+'deg)',
+		'transform':'rotate('+degrees+'deg)'});
 }
 
 function getComponent(name) {
@@ -211,6 +227,35 @@ function displayConfigComponentPane() {
     }
 }
 
+function generateField() {
+	$(".keyframes-field-tiles").empty();
+	var robot = $('<div class="keyframes-field-robot"><i class="glyphicon glyphicon-arrow-right"></i></div>');
+	$(".keyframes-field-tiles").append(robot);
+	for(var i = 0; i < 6; i ++) {
+		for(var j = 0; j < 6; j ++) {
+			var element = field[j][i];
+			var tile = $('<div class="keyframes-field-tile"></div>');
+			switch(element) {
+				case 0: {
+					var tileColor = (i%2 == j%2)?'#DDDDDD':'#D4D4D4';
+					tile.css({'background':tileColor});
+					break;
+				}
+				case 1: {
+					tile.css({'background':'#CC6666'});
+					break;
+				}
+				case 2: {
+					tile.css({'background':'#6666CC'});
+					break;
+				}
+			}
+			tile.css({'top':j*16.7+'%','left':i*16.7+'%'});
+			$(".keyframes-field-tiles").append(tile);
+		}
+	}
+}
+
 function addOptionToBox(optionsGroup,index) {
 	var optionsBox = optionsGroup.children().first();
 	var optionType = optionsGroup.data("type");
@@ -244,9 +289,26 @@ $(window).bind('keydown.ctrl_s keydown.meta_s', function(event) {
 	}
 });
 
+function resizeField() {
+    var ratio = $(".keyframes-field-wrapper").width()/$(".keyframes-field-wrapper").height();
+    if(ratio > 1) {
+        $(".keyframes-field").height($(".keyframes-field-wrapper").height());
+        $(".keyframes-field").width($(".keyframes-field").height());
+    }else
+    {   
+        $(".keyframes-field").width($(".keyframes-field-wrapper").width());
+        $(".keyframes-field").height($(".keyframes-field").width());
+    }
+}
+
+$(window).bind('resize',function() {
+	resizeField();
+});
+
 function switchTab() {
 	$(".tab-panel").fadeOut({'duration':200,'queue':false});
 	$("#"+$(".selected").data("panel")).fadeIn({'duration':200,'queue':false});
+	resizeField();
 }
 
 $(".tab").click(function() {
@@ -258,3 +320,4 @@ $(".tab").click(function() {
 
 switchTab();
 updateComponentList();
+generateField();
