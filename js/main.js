@@ -271,6 +271,34 @@ function displayKeyframe() {
 		$(".keyframes-init-rotation").val(rotation);
 		$(".keyframes-init-xoffset").val(xoffset);
 		$(".keyframes-init-yoffset").val(yoffset);
+		$(".keyframes-init-lift").empty();
+		$(".keyframes-init-pneumatics").empty();
+		for(var i = 0; i < components.length; i ++) {
+			var component = components[i];
+			if(component['type'] == 1) {
+				$(".keyframes-init-lift").append($('<h4>'+component['name']+'</h4>'));
+				var input = $('<input type="text" data-name="'+component['name']+'" class="input-text" placeholder="Initial Setting" />');
+				var value = getProperty(properties,'-'+component['name'],0);
+				input.val(value);
+				input.on('change',function() {
+					var v = $(this).val();
+					if(isNaN(v)) v = 0;
+					$(this).val(v);
+					keyframes[0]['properties']['-'+$(this).data("name")] = v;
+				});
+				$(".keyframes-init-lift").append(input);
+			}
+            if(component['type'] == 2) {
+                $(".keyframes-init-pneumatics").append($('<h4>'+component['name']+'</h4>'));
+                var input = $('<select data-name="'+component['name']+'"><option value="0">Off</option><option value="1">On</option></select>');
+                var value = getProperty(properties,'-'+component['name'],0);
+                input.val(value);
+                input.on('change',function() { 
+                    keyframes[0]['properties']['-'+$(this).data("name")] = $(this).val();
+                });
+                $(".keyframes-init-pneumatics").append(input);
+            }
+		}
 	}
 }
 
@@ -432,6 +460,8 @@ function switchTab() {
 	$(".tab-panel").fadeOut({'duration':200,'queue':false});
 	$("#"+$(".selected").data("panel")).fadeIn({'duration':200,'queue':false});
 	resizeField();
+	updateComponentList();
+	updateKeyframeList();
 }
 
 $(".tab").click(function() {
