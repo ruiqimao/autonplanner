@@ -52,7 +52,9 @@ $(".new-component").click(function() {
 					'drive-motors-left':[],
 					'drive-motors-right':[],
 					'drive-encoder-left':0,
-					'drive-encoder-right':0});
+					'drive-encoder-right':0,
+					'lift-motors':[],
+					'lift-encoder':0});
 	selectedComponent = components.length-1;
 	updateComponentList();
 });
@@ -88,6 +90,14 @@ $(".save-component").click(function() {
 		components[selectedComponent]['drive-motors-right'] = motorsRight;
 		components[selectedComponent]['drive-encoder-left'] = $("#config-component-drive-encoder-left").val();
 		components[selectedComponent]['drive-encoder-right'] = $("#config-component-drive-encoder-right").val();
+	}
+	if(paneIndex == 1) {
+		var motors = [];
+		$("#config-component-lift-motor").children().first().children().each(function() {
+			    motors.push($(this).data("index"));
+		});
+		components[selectedComponent]['lift-motors'] = motors;
+		components[selectedComponent]['lift-encoder'] = $("#config-component-lift-encoder").val();
 	}
 	$(".config-component.selected").text(newName);
 	showMessage("Saved!");
@@ -131,6 +141,13 @@ function displayConfigComponentPane() {
 		}
 		$("#config-component-drive-encoder-left").val(component['drive-encoder-left']);
 		$("#config-component-drive-encoder-right").val(component['drive-encoder-right']);
+	}
+	if(paneIndex == 1) {
+		$("#config-component-lift-motor").children().first().empty();
+		for(var i = 0; i < component['lift-motors'].length; i ++) {
+			addOptionToBox($("#config-component-lift-motor"),component['lift-motors'][i]);
+		}
+		$("#config-component-lift-encoder").val(component['lift-encoder']);
 	}
 }
 
