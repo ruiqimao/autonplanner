@@ -1,4 +1,6 @@
-var options = {'motor':['port1','port2','port3','port4','port5','port6','port7','port8','port9','port10']};
+var options = {
+	'motor':['port1','port2','port3','port4','port5','port6','port7','port8','port9','port10'],
+	'digitalsensor':['Digital 1','Digital 2','Digital 3','Digital 4','Digital 5','Digital 6','Digital 7','Digital 8','Digital 9','Digital 10','Digital 11','Digital 12']};
 
 var components = [];
 var selectedComponent = 0;
@@ -54,7 +56,9 @@ $(".new-component").click(function() {
 					'drive-encoder-left':0,
 					'drive-encoder-right':0,
 					'lift-motors':[],
-					'lift-encoder':0});
+					'lift-encoder':0,
+					'pneumatic-ports':[],
+					'other-motors':[]});
 	selectedComponent = components.length-1;
 	updateComponentList();
 });
@@ -99,8 +103,52 @@ $(".save-component").click(function() {
 		components[selectedComponent]['lift-motors'] = motors;
 		components[selectedComponent]['lift-encoder'] = $("#config-component-lift-encoder").val();
 	}
+	if(paneIndex == 2) {
+		var ports = [];
+		$("#config-component-pneumatic-port").children().first().children().each(function() {
+			ports.push($(this).data("index"));
+		});
+		components[selectedComponent]['pneumatic-ports'] = ports;
+	}
+    if(paneIndex == 3) {
+        var motors = [];
+        $("#config-component-other-motor").children().first().children().each(function() {
+            motors.push($(this).data("index"));
+        });
+        components[selectedComponent]['other-motors'] = motors;
+    }
 	$(".config-component.selected").text(newName);
 	showMessage("Saved!");
+});
+
+$(".export-configuration").click(function() {
+	var exportString = JSON.stringify(components);
+	var pom = document.createElement('a');
+	pom.setAttribute('target','_blank');
+	pom.setAttribute('href','data:text/plain;charset=utf-8,'+encodeURIComponent(exportString));
+	pom.setAttribute('download','configuration.vcfg');
+	pom.click();
+});
+
+$(".import-configuration").click(function() {
+	var fileInput = $('<input type="file" name="files[]" />');
+	fileInput.on('change',function(event) {
+		var file = $(this).get(0).files[0];
+		var reader = new FileReader();
+		reader.readAsText(file,"UTF-8");
+		reader.onload = function(evt) {
+			var content = evt.target.result;
+			try {
+				components = JSON.parse(content);
+				updateComponentList();
+				showMessage("Configuration loaded!");
+			}
+			catch(err) {
+				throwError("Couldn't read the configuration file");
+			}
+		};
+	});
+	fileInput.click();
 });
 
 $(".config-component-type").click(function() {
@@ -149,6 +197,18 @@ function displayConfigComponentPane() {
 		}
 		$("#config-component-lift-encoder").val(component['lift-encoder']);
 	}
+	if(paneIndex == 2) {
+	    $("#config-component-pneumatic-port").children().first().empty();
+	    for(var i = 0; i < component['pneumatic-ports'].length; i ++) {
+	        addOptionToBox($("#config-component-pneumatic-port"),component['pneumatic-ports'][i]);
+	    }
+	}
+    if(paneIndex == 3) {
+        $("#config-component-other-motor").children().first().empty();
+        for(var i = 0; i < component['other-motors'].length; i ++) {
+            addOptionToBox($("#config-component-other-motor"),component['other-motors'][i]);
+        }
+    }
 }
 
 function addOptionToBox(optionsGroup,index) {
@@ -176,7 +236,7 @@ $(".options-button").click(function() {
 });
 
 $(window).bind('keydown.ctrl_s keydown.meta_s', function(event) {
-	if(event.keyCode == 83) {
+	if((event.ctrlKey || event.metaKey) && event.keyCode == 83) {
 		if($("#config").is(":visible")) {
 			if(selectedComponent < components.length) $(".save-component").click();
 			event.preventDefault();
