@@ -14,6 +14,9 @@ var field = [
 var components = [];
 var selectedComponent = 0;
 
+var keyframes = [{'type':'init',''}];
+var selectedKeyframe = 0;
+
 function throwError(error) {
 	$(".toast").addClass("error");
 	$(".toast").text(error);
