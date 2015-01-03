@@ -450,6 +450,7 @@ select {
 	box-sizing:border-box;
 	border-left:1px solid #CACACA;
 	position:relative;
+	overflow-y:auto;
 }
 
 .keyframes-toolbar {
