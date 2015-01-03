@@ -1,5 +1,7 @@
+var components = [];
+
 function switchTab() {
-	$(".panel").fadeOut({'duration':200,'queue':false});
+	$(".tab-panel").fadeOut({'duration':200,'queue':false});
 	$("#"+$(".selected").data("panel")).fadeIn({'duration':200,'queue':false});
 }
 
