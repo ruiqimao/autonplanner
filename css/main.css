@@ -600,6 +600,62 @@ select {
 	width:100%;
 }
 
+.keyframes-no-drive {
+	background:#FFFFFF;
+	z-index:2;
+	position:absolute;
+	left:0;
+	right:0;
+	top:0;
+	bottom:0;
+	display:none;
+}
+
+.keyframes-no-drive span {
+    position:absolute;
+    top:50%;
+    left:50%;
+    -webkit-transform: translateX(-50%) translateY(-50%);
+    -ms-transform: translateX(-50%) translateY(-50%);
+    transform: translateX(-50%) translateY(-50%);
+    font-family:Roboto;
+    color:#666666;
+}
+
+.keyframes-left-overlay {
+	position:absolute;
+	left:0;
+	top:0;
+	bottom:0;
+	width:20%;
+	z-index:2;
+	display:none;
+}
+
+.keyframes-right-overlay {
+	position:absolute;
+	right:0;
+	top:0;
+	bottom:0;
+	width:20%;
+	box-sizing:border-box;
+	background:#FCFCFC;
+	border-left:1px solid #CCCCCC;
+	z-index:2;
+	display:none;
+	overflow-y:auto;
+}
+
+.keyframes-components {
+	width:100%;
+	padding:1rem;
+	box-sizing:border-box;
+}
+
+.keyframes-components h3 {
+	padding:0;
+}
+
 @media (max-width:960px) {
 	
 	.toolbar-button {

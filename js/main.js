@@ -74,7 +74,7 @@ $(".new-component").click(function() {
 	var i = 1;
 	while(getComponent("Untitled Component "+i)) i ++;
 	components.push({'name':'Untitled Component '+i,
-					'type':0,
+					'type':3,
 					'drive-motors-left':[],
 					'drive-motors-right':[],
 					'drive-encoder-left':0,
@@ -179,6 +179,14 @@ $(".import-configuration").click(function() {
 });
 
 $(".config-component-type").click(function() {
+	var driveExists = false;
+	for(var i = 0; i < components.length; i ++) {
+		if(components[i]['type'] == 0) driveExists = true;
+	}
+	if($(this).index() == 0 && driveExists) {
+		throwError("You already have a drive component!");
+		return;
+	}
 	$(".config-component-type").removeClass("selected");
 	$(this).addClass("selected");
 	displayConfigComponentPane();
@@ -347,7 +355,7 @@ function displayKeyframe() {
 		$("#keyframes-time-type").val("time");
 		$("#keyframes-time-target").empty();
 		$("#keyframes-pid-pneumatics-value").val(0);
-		$("#keyframes-pid-other-value").val(0);
+		$(".keyframes-pid-other-value").val(0);
 		for(var i = 0; i < components.length; i ++) {
 		    var component = components[i];
 		    if(parseInt(component['type']) > 1) {
@@ -369,7 +377,7 @@ function displayKeyframe() {
                 $(".keyframes-time-pneumatics").show();
 				$(".keyframes-time-other").hide();
 				$(".keyframes-time-value-header").show();
-				$(".keyframes-time-pneumatics-value").val(value);
+				$("#keyframes-time-pneumatics-value").val(value);
             }else
             {
                 $(".keyframes-time-pneumatics").hide();
@@ -415,7 +423,7 @@ $("#keyframes-time-pneumatics-value").on('change',function() {
 	moveRobot();
 });
 
-$("#keyframes-time-other-value").on('change',function() {
+$(".keyframes-time-other-value").on('change',function() {
 	var value = $(this).val();
 	if(isNaN(value)) value = 0;
 	$(this).val(value);
@@ -547,6 +555,193 @@ function moveRobot() {
 	rotate(robot,rr);
 }
 
+$(".export-autonomous").click(function() {
+    var exportString = JSON.stringify(keyframes);
+    var pom = document.createElement('a');
+    pom.setAttribute('target','_blank');
+    pom.setAttribute('href','data:text/plain;charset=utf-8,'+encodeURIComponent(exportString));
+    pom.setAttribute('download','keyframes.vcfg');
+    pom.click();
+});
+
+$(".import-autonomous").click(function() {
+    var fileInput = $('<input type="file" name="files[]" />');
+    fileInput.on('change',function(event) {
+        var file = $(this).get(0).files[0];
+        var reader = new FileReader();
+        reader.readAsText(file,"UTF-8");
+        reader.onload = function(evt) {
+            var content = evt.target.result;
+            try {
+                keyframes = JSON.parse(content);
+                updateKeyframeList();
+                showMessage("Autonomous loaded!");
+            }
+            catch(err) {
+                throwError("Couldn't read the keyframe file");
+            }
+        };
+    });
+    fileInput.click();
+});
+
+function updatePlayback(comp,time) {
+	setTimeout(function() {
+		for(var i = 0; i < comp.length; i ++) {
+			var component = comp[i];
+			var type = component['type'];
+			if(type == 0) {
+				var robot = $(".keyframes-field-robot");
+				var x = component['x'];
+				var y = component['y'];
+				var r = component['r'];
+				robot.css({'left':(x/144*100-6.2625)+'%','top':(y/144*100-6.2625)+'%'});
+				rotate(robot,r);
+			}
+			if(type == 1) {
+				var id = component['id'];
+				var value = component['value'];
+				$("#c"+id).text(value);
+			}
+			if(type == 2) {
+				var id = component['id'];
+				var value = component['value'];
+				$("#c"+id).text(value==0?"Off":"On");
+			}
+			if(type == 3) {
+				var id = component['id'];
+				var value = component['value'];
+				$("#c"+id).text(value);
+			}
+		}
+	},time);
+}
+
+$(".play-autonomous").click(function() {
+	$(".keyframes-toolbar").fadeOut({'duration':200,'queue':false});
+	$(".keyframes-left-overlay").fadeIn({'duration':200,'queue':false});
+	$(".keyframes-right-overlay").fadeIn(200);
+	$(".keyframes-components").empty();
+	for(var i = 0; i < components.length; i ++) {
+		var component = components[i];
+		if(component['type'] > 0) {
+			$(".keyframes-components").append($('<h3>'+component['name']+'</h3>'));
+			$(".keyframes-components").append($('<div style="padding:1rem;" id="c'+i+'"></div>'));
+		}
+	}
+	var rx = 0.0;
+	var ry = 0.0;
+	var rr = 0.0;
+	var time = 0;
+	var values = {};
+	for(var i = 0; i < keyframes.length; i ++) {
+		var keyframe = keyframes[i];
+		var properties = keyframe['properties'];
+		var type = keyframe['type'];
+		if(type == 'init') {
+			var comp = [];
+     		var startingTile = getProperty(properties,'start',1);
+     		switch(startingTile) {
+    		    case 1: {
+    		        rx = 12;
+    		        ry = 108;
+    		        break;
+    		    }
+    		    case 2: {
+    		        rx = 36;
+    		        ry = 132;
+    		        break;
+    		    }
+    		    case 3: {
+    		        rx = 108;
+    		        ry = 12;
+        		    break;
+        		}
+        		case 4: {
+        		    rx = 132;
+        		    ry = 36;
+        		    break;
+        		}
+    		}
+    		rr = getProperty(properties,'rotation',0.0);
+    		rx += getProperty(properties,'xoffset',0.0);
+    		ry += getProperty(properties,'yoffset',0.0);
+			comp.push({'type':0,'x':rx,'y':ry,'r':rr});
+			for(var j = 0; j < components.length; j ++) {
+				var component = components[j];
+				if(component['type'] > 0) {
+					values[j] = getProperty(properties,'-'+component['name'],0);
+					comp.push({'type':component['type'],'id':j,'value':getProperty(properties,'-'+component['name'],0)});
+				}
+			}
+			updatePlayback(comp,time);
+			time += 1000;
+		}
+		if(type == 'pid') {
+			var componentName = getProperty(properties,'target',undefined);
+			var component = getComponent(componentName);
+			if(component) {
+				var realComponent = component[1];
+				if(realComponent['type'] == 0) {
+					var action = getProperty(properties,'action','drive');
+					var value = getProperty(properties,'value',0);
+					var sign = value>0?1:-1;
+					if(action == 'drive') {
+						for(var j = 0; j < Math.abs(value); j ++) {
+							var angle = (rr-90)*Math.PI/180;
+							rx += Math.cos(angle)*sign;
+							ry += Math.sin(angle)*sign;
+							var comp = [];
+							comp.push({'type':0,'x':rx,'y':ry,'r':rr});
+							updatePlayback(comp,time);
+							time += 25;
+						}
+					}else
+					{
+						for(var j = 0; j < Math.abs(value); j ++) {
+							rr += sign;
+							var comp = [];
+							comp.push({'type':0,'x':rx,'y':ry,'r':rr});
+							updatePlayback(comp,time);
+							time += 10;
+						}
+					}
+				}
+				if(realComponent['type'] == 1) {
+					var value = getProperty(properties,'value',0);
+					var index = component[0];
+					var difference = value-values[index];
+					var direction = difference>0?1:-1;
+					for(var j = 0; j < Math.abs(difference); j ++) {
+						var comp = [];
+						values[index] += direction;
+						comp.push({'type':1,'id':index,'value':values[index]});
+						updatePlayback(comp,time);
+						time += 10;
+					}
+				}
+			}
+		}
+		if(type == 'time') {
+			var componentName = getProperty(properties,'target',undefined);
+			var component = getComponent(componentName);
+			if(component) {
+				var realComponent = component[1];
+				var comp = [];
+				comp.push({'type':realComponent['type'],'id':component[0],'value':getProperty(properties,'value',0)});
+				updatePlayback(comp,time);
+				time += parseFloat(getProperty(properties,'time',0));
+			}
+		}
+	}
+	setTimeout(function() {
+		$(".keyframes-toolbar").fadeIn({'duration':200,'queue':false});
+		$(".keyframes-left-overlay").fadeOut({'duration':200,'queue':false});
+		$(".keyframes-right-overlay").fadeOut(200);
+		setTimeout(function() { $(".keyframes-frame.selected").click(); },200);
+	},time);
+});
+
 function generateField() {
 	$(".keyframes-field-tiles").empty();
 	var robot = $('<div class="keyframes-field-robot"><i class="glyphicon glyphicon-arrow-up"></i></div>');
@@ -617,11 +812,26 @@ $(window).bind('resize',function() {
 
 function switchTab() {
 	$(".tab-panel").fadeOut({'duration':200,'queue':false});
-	$("#"+$(".selected").data("panel")).fadeIn({'duration':200,'queue':false});
+	$("#"+$(".tab.selected").data("panel")).fadeIn({'duration':200,'queue':false});
 	resizeField();
 	updateComponentList();
 	updateKeyframeList();
 	moveRobot();
+	if($(".tab.selected").index() == 1) {
+		var driveExists = false;
+		for(var i = 0; i < components.length; i ++) {
+			if(components[i]['type'] == 0) driveExists = true;
+		}
+		if(!driveExists) {
+			$(".keyframes-no-drive").show();
+		}else
+		{
+			setTimeout(function() { $(".keyframes-no-drive").fadeOut({'duration':200,'queue':false}); }, 200);
+		}
+	}else
+	{
+		setTimeout(function() { $(".keyframes-no-drive").fadeOut({'duration':200,'queue':false}); }, 200);
+	}
 }
 
 $(".tab").click(function() {
