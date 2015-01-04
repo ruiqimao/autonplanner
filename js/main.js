@@ -601,17 +601,34 @@ function updatePlayback(comp,time) {
 			if(type == 1) {
 				var id = component['id'];
 				var value = component['value'];
-				$("#c"+id).text(value);
+				var min = parseInt($("#c"+id).data("min"));
+				var max = parseInt($("#c"+id).data("max"));
+				var bar = $("#c"+id).children().first();
+				var span = $("#c"+id).find('span');
+				span.text(value);
+				if(min != max) {	
+					bar.css({'width':(value-min)/max*100+'%'});
+				}
 			}
 			if(type == 2) {
 				var id = component['id'];
 				var value = component['value'];
 				$("#c"+id).text(value==0?"Off":"On");
+				$("#c"+id).css({'border':'1px solid '+(value==0?'#CC7777':'#77CC77')});
 			}
 			if(type == 3) {
 				var id = component['id'];
 				var value = component['value'];
 				$("#c"+id).text(value);
+				if(value > 0) {
+					$("#c"+id).css({'border':'1px solid #77CC77'});
+				}
+				if(value < 0) {
+					$("#c"+id).css({'border':'1px solid #CC7777'});
+				}
+				if(value == 0) {
+					$("#c"+id).css({'border':'1px solid #CFCFCF'});
+				}
 			}
 		}
 	},time);
@@ -626,7 +643,28 @@ $(".play-autonomous").click(function() {
 		var component = components[i];
 		if(component['type'] > 0) {
 			$(".keyframes-components").append($('<h3>'+component['name']+'</h3>'));
-			$(".keyframes-components").append($('<div style="padding:1rem;" id="c'+i+'"></div>'));
+			var playbackComponent = $('<div class="keyframes-playback-component" id="c'+i+'"></div>');
+			if(component['type'] == 1) {
+				var min = undefined;
+				var max = undefined;
+				for(var j = 0; j < keyframes.length; j ++) {
+					var keyframe = keyframes[j];
+					if(keyframe['type'] == 'pid' && getProperty(keyframe['properties'],'target',undefined) == component['name']) {
+						var value = getProperty(keyframe['properties'],'value',0);
+						if(min == undefined) min = value;
+						if(max == undefined) max = value;
+						if(value < min) min = value;
+						if(value > max) max = value;
+					}
+				}
+				if(min == undefined) min = 0;
+				if(max == undefined) max = 0;
+				playbackComponent.data("min",min);
+				playbackComponent.data("max",max);
+				playbackComponent.append($('<div class="keyframes-playback-lift"></div>'));
+				playbackComponent.append($('<span style="position:relative;z-index:2;"></span>'));
+			}
+			$(".keyframes-components").append(playbackComponent);
 		}
 	}
 	var rx = 0.0;
