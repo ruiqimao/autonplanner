@@ -95,7 +95,11 @@ $(".delete-component").click(function() {
 	updateComponentList();
 });
 
-$(".save-component").click(function() {
+$(".config-component-name,#config-component-drive-encoder-left,#config-component-drive-encoder-right,#config-component-lift-encoder").on('change',function() {
+	saveComponent();
+});
+
+function saveComponent() {
 	var newName = $(".config-component-name").val();
 	var existingComponent = getComponent(newName);
 	if(existingComponent) if(existingComponent[0] != selectedComponent) {
@@ -142,8 +146,7 @@ $(".save-component").click(function() {
         components[selectedComponent]['other-motors'] = motors;
     }
 	$(".config-component.selected").text(newName);
-	showMessage("Saved!");
-});
+}
 
 $(".export-configuration").click(function() {
 	var exportString = JSON.stringify(components);
@@ -179,6 +182,7 @@ $(".config-component-type").click(function() {
 	$(".config-component-type").removeClass("selected");
 	$(this).addClass("selected");
 	displayConfigComponentPane();
+	saveComponent();
 });
 
 function displayComponent() {
@@ -341,7 +345,46 @@ function displayKeyframe() {
 	if(type == 'time') {
 		var properties = keyframe['properties'];
 		$("#keyframes-time-type").val("time");
-		
+		$("#keyframes-time-target").empty();
+		$("#keyframes-pid-pneumatics-value").val(0);
+		$("#keyframes-pid-other-value").val(0);
+		for(var i = 0; i < components.length; i ++) {
+		    var component = components[i];
+		    if(parseInt(component['type']) > 1) {
+		        $("#keyframes-time-target").append($('<option value="'+component['name']+'">'+component['name']+'</option>'));
+			}
+		}
+        var target = getProperty(properties,'target',undefined);
+        if(getComponent(target)) {
+            $("#keyframes-time-target").val(target);
+        }else
+        {
+            if(components.length > 0) $("#keyframes-time-target").val(components[0]['name']);
+        }
+		var value = getProperty(properties,'value',0);
+        var component = getComponent($("#keyframes-time-target").val());
+        if(component) {
+            keyframe['properties']['target'] = component[1]['name'];
+            if(parseInt(component[1]['type']) == 2) {
+                $(".keyframes-time-pneumatics").show();
+				$(".keyframes-time-other").hide();
+				$(".keyframes-time-value-header").show();
+				$(".keyframes-time-pneumatics-value").val(value);
+            }else
+            {
+                $(".keyframes-time-pneumatics").hide();
+				$(".keyframes-time-other").show();
+				$(".keyframes-time-value-header").show();
+				$(".keyframes-time-other-value").val(value);
+            }
+        }else
+        {
+            $(".keyframes-time-pneumatics").hide();
+			$(".keyframes-time-other").hide();
+			$(".keyframes-time-value-header").hide();
+        }
+		var time = getProperty(properties,'time',0);
+		$(".keyframes-time-time").val(time);
 	}
 }
 
@@ -359,6 +402,31 @@ $(".delete-keyframe").click(function() {
     if(selectedKeyframe < 0) selectedKeyframe = 0;
     updateKeyframeList();
 	moveRobot();
+});
+
+$("#keyframes-time-target").on('change',function() {
+	keyframes[selectedKeyframe]['properties']['target'] = $(this).val();
+	displayKeyframe();
+	moveRobot();
+});
+
+$("#keyframes-time-pneumatics-value").on('change',function() {
+	keyframes[selectedKeyframe]['properties']['value'] = $(this).val();
+	moveRobot();
+});
+
+$("#keyframes-time-other-value").on('change',function() {
+	var value = $(this).val();
+	if(isNaN(value)) value = 0;
+	$(this).val(value);
+	keyframes[selectedKeyframe]['properties']['value'] = value;
+});
+
+$(".keyframes-time-time").on('change',function() {
+	var value = $(this).val();
+	if(isNaN(value)) value = 0;
+	$(this).val(value);
+	keyframes[selectedKeyframe]['properties']['time'] = value;
 });
 
 $("#keyframes-pid-type").on('change',function() {
@@ -511,6 +579,7 @@ function addOptionToBox(optionsGroup,index) {
 	var newOptionClose = $('<img class="option-close" src="images/icons/cancel.png" />');
 	newOptionClose.click(function() {
 		$(this).parent().remove();
+		saveComponents();
 	});
 	newOption.click(function() {
 		var subOptions = options[$(this).data("type")];
@@ -519,6 +588,7 @@ function addOptionToBox(optionsGroup,index) {
 		if(index >= subOptions.length) index = 0;
 		$(this).data("index",index);
 		$(this).children().first().text(subOptions[index]);
+		saveComponents();
 	});
 	newOption.append(newOptionClose);
 	optionsBox.append(newOption);
@@ -526,15 +596,7 @@ function addOptionToBox(optionsGroup,index) {
 
 $(".options-button").click(function() {
 	addOptionToBox($(this).parent(),0);
-});
-
-$(window).bind('keydown.ctrl_s keydown.meta_s', function(event) {
-	if((event.ctrlKey || event.metaKey) && event.keyCode == 83) {
-		if($("#config").is(":visible")) {
-			if(selectedComponent < components.length) $(".save-component").click();
-			event.preventDefault();
-		}
-	}
+	saveComponent();
 });
 
 function resizeField() {

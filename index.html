@@ -33,8 +33,6 @@
 					<span class="toolbar-separater">|</span>
 					<button class="toolbar-button export-configuration"><img class="icon" src="images/icons/share.png" /> Export</button>
 					<button class="toolbar-button import-configuration"><img class="icon" src="images/icons/collection.png" /> Import</button>
-					<span class="toolbar-separater">|</span>
-					<button class="toolbar-button save-component" disabled><img class="icon" src="images/icons/save.png" /></button>
 				</div>
 				<div class="config-component-settings">
 					<input type="text" class="input-text config-component-name" placeholder="Component Name" />
@@ -182,7 +180,6 @@
 					<button class="toolbar-button export-autonomous"><img class="icon" src="images/icons/share.png" /> Export</button>
 					<button class="toolbar-button import-autonomous"><img class="icon" src="images/icons/collection.png" /> Import</button>
 					<span class="toolbar-separater">|</span>
-					<button class="toolbar-button save-keyframe" disabled><img class="icon" src="images/icons/save.png" /></button>
 					<button class="toolbar-button play-autonomous"><img class="icon" src="images/icons/play.png" /></button>
                 </div>
 			</div>
@@ -252,6 +249,26 @@
 						    <option value="pid">PID</option>
 							<option value="time">Time</option>
 						</select>
+					</div>
+					<h3>Target</h3>
+					<div style="padding:1rem;">
+						<select id="keyframes-time-target"></select>
+					</div>
+					<h3 class="keyframes-time-value-header">Value</h3>
+					<div style="padding:1rem;" class="keyframes-time-value-header">
+						<div class="keyframes-time-pneumatics">
+							<select id="keyframes-time-pneumatics-value">
+								<option value="0">Off</option>
+								<option value="1">On</option>
+							</select>
+						</div>
+						<div class="keyframes-time-other">
+							<input type="text" class="input-text keyframes-time-other-value" placeholder="Value" />
+						</div>
+					</div>
+					<h3>Time</h3>
+					<div style="padding:1rem;">
+						<input type="text" class="input-text keyframes-time-time" placeholder="Time" />
 					</div>
 				</div>
 			</div>

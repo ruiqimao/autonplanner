@@ -588,6 +588,18 @@ select {
 	width:100%;
 }
 
+.keyframes-pid-value {
+	width:100%;
+}
+
+.keyframes-time-other-value {
+	width:100%;
+}
+
+.keyframes-time-time {
+	width:100%;
+}
+
 @media (max-width:960px) {
 	
 	.toolbar-button {
