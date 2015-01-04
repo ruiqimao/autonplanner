@@ -328,7 +328,7 @@ function displayKeyframe() {
                 var action = getProperty(properties,'action','drive');
                 $("#keyframes-pid-action").val(action);
             }else
-            {   
+            {
                 $(".keyframes-pid-drive").hide();
             }
 		}else
@@ -369,6 +369,7 @@ $("#keyframes-pid-type").on('change',function() {
 
 $("#keyframes-pid-target").on('change',function() {
 	keyframes[selectedKeyframe]['properties']['target'] = $(this).val();
+	displayKeyframe();
 	moveRobot();
 });
 
