@@ -219,6 +219,41 @@
 					<h3>Pneumatics</h3>
 					<div class="keyframes-init-pneumatics" style="padding:1rem;padding-top:0;"></div>
 				</div>
+				<div class="keyframes-properties-pane" id="pid">
+					<h3>Action Type</h3>
+					<div style="padding:1rem;">
+						<select id="keyframes-pid-type">
+							<option value="pid">PID</option>
+							<option value="time">Time</option>
+						</select>
+					</div>
+					<h3>Target</h3>
+					<div style="padding:1rem;">
+						<select id="keyframes-pid-target"></select>
+					</div>
+					<div class="keyframes-pid-drive">
+						<h3>Action</h3>
+						<div style="padding:1rem;">
+							<select id="keyframes-pid-action">
+								<option value="drive">Drive</option>
+								<option value="turn">Turn</option>
+							</select>
+						</div>
+					</div>
+					<h3>Value</h3>
+					<div style="padding:1rem;">
+						<input type="text" class="input-text keyframes-pid-value" placeholder="Value" />
+					</div>
+				</div>
+				<div class="keyframes-properties-pane" id="time">
+					<h3>Action Type</h3>
+					<div style="padding:1rem;">
+					    <select id="keyframes-time-type">
+						    <option value="pid">PID</option>
+							<option value="time">Time</option>
+						</select>
+					</div>
+				</div>
 			</div>
 		</div>
 		<div class="toast">Message</div>

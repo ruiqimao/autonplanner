@@ -247,7 +247,9 @@ function updateKeyframeList() {
             selectedKeyframe = frameIndex;
             $(".keyframes-frame.selected").removeClass("selected");
             $(this).addClass("selected");
+			if(frameIndex == 0) $(".delete-keyframe").attr("disabled",true); else $(".delete-keyframe").removeAttr("disabled");
             displayKeyframe();
+			moveRobot();
         });
         $(".keyframes-frames").append(frameDisplay);
     }
@@ -300,12 +302,54 @@ function displayKeyframe() {
             }
 		}
 	}
+	if(type == 'pid') {
+		var properties = keyframe['properties'];
+		$("#keyframes-pid-type").val("pid");
+		$("#keyframes-pid-target").empty();
+		$("#keyframes-pid-action").val("drive");
+		for(var i = 0; i < components.length; i ++) {
+			var component = components[i];
+			if(parseInt(component['type']) < 2) {
+				$("#keyframes-pid-target").append($('<option value="'+component['name']+'">'+component['name']+'</option>'));
+			}
+		}
+		var target = getProperty(properties,'target',undefined);
+		if(getComponent(target)) {
+			$("#keyframes-pid-target").val(target);
+		}else
+		{
+			if(components.length > 0) $("#keyframes-pid-target").val(components[0]['name']);
+		}
+		var component = getComponent($("#keyframes-pid-target").val());
+		if(component) {
+			keyframe['properties']['target'] = component[1]['name'];
+            if(parseInt(component[1]['type']) == 0) {
+                $(".keyframes-pid-drive").show();
+                var action = getProperty(properties,'action','drive');
+                $("#keyframes-pid-action").val(action);
+            }else
+            {   
+                $(".keyframes-pid-drive").hide();
+            }
+		}else
+		{
+			$(".keyframes-pid-drive").hide();
+		}
+		var value = getProperty(properties,'value',0);
+		$(".keyframes-pid-value").val(value);
+	}
+	if(type == 'time') {
+		var properties = keyframe['properties'];
+		$("#keyframes-time-type").val("time");
+		
+	}
 }
 
 $(".new-keyframe").click(function() {
 	keyframes.push({'type':'pid','properties':{}});
     selectedKeyframe = keyframes.length-1;
     updateKeyframeList();
+	moveRobot();
 });
 
 $(".delete-keyframe").click(function() {
@@ -314,6 +358,37 @@ $(".delete-keyframe").click(function() {
     if(selectedKeyframe >= keyframes.length) selectedKeyframe = keyframes.length-1;
     if(selectedKeyframe < 0) selectedKeyframe = 0;
     updateKeyframeList();
+	moveRobot();
+});
+
+$("#keyframes-pid-type").on('change',function() {
+	keyframes[selectedKeyframe]['type'] = $(this).val();
+	displayKeyframe();
+	moveRobot();
+});
+
+$("#keyframes-pid-target").on('change',function() {
+	keyframes[selectedKeyframe]['properties']['target'] = $(this).val();
+	moveRobot();
+});
+
+$("#keyframes-pid-action").on('change',function() {
+	keyframes[selectedKeyframe]['properties']['action'] = $(this).val();
+	moveRobot();
+});
+
+$(".keyframes-pid-value").on('change',function() {
+	var value = $(this).val();
+	if(isNaN(value)) value = 0;
+	$(this).val(value);
+	keyframes[selectedKeyframe]['properties']['value'] = value;
+	moveRobot();
+});
+
+$("#keyframes-time-type").on('change',function() {
+	keyframes[selectedKeyframe]['type'] = $(this).val();
+	displayKeyframe();
+	moveRobot();
 });
 
 $("#keyframes-init-start").on('change',function() {
@@ -378,6 +453,27 @@ function moveRobot() {
 	rr = getProperty(initProperties,'rotation',0.0);
 	rx += getProperty(initProperties,'xoffset',0.0);
 	ry += getProperty(initProperties,'yoffset',0.0);
+	for(var i = 0; i <= selectedKeyframe; i ++) {
+		var keyframe = keyframes[i];
+		if(keyframe['type'] == 'pid') {
+			var componentName = getProperty(keyframe['properties'],'target',undefined);
+			var component = getComponent(componentName);
+			if(component) {
+				if(parseInt(component[1]['type']) == 0) {
+					var action = getProperty(keyframe['properties'],'action','drive');
+					var value = getProperty(keyframe['properties'],'value',0);
+					if(action == 'drive') {
+						var angle = (rr-90)*Math.PI/180;
+						rx += Math.cos(angle)*value;
+						ry += Math.sin(angle)*value;
+					}else
+					{
+						rr += parseFloat(value);
+					}
+				}
+			}
+		}
+	}
 	robot.css({'left':(rx/144*100-6.2625)+'%','top':(ry/144*100-6.2625)+'%'});
 	rotate(robot,rr);
 }
@@ -462,6 +558,7 @@ function switchTab() {
 	resizeField();
 	updateComponentList();
 	updateKeyframeList();
+	moveRobot();
 }
 
 $(".tab").click(function() {
