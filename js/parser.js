@@ -162,6 +162,8 @@ function parse(config,frames) {
 	writeLine();
 	writeLine('void vap_autonomous() {');
 	writeLine();
+	writeLine('\tvap_init();');
+	writeLine();
 	writeLine('\tstartTask(vap_pid);');
 	writeLine();
 	for(var i = 1; i < frames.length; i ++) {
