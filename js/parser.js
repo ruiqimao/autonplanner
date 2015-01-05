@@ -148,7 +148,7 @@ function parse(config,frames) {
 			var motors = component['other-motors'];
 			for(var j = 0; j < motors.length; j ++) {
 				var motor = parseInt(motors[j]);
-				writeLine('\t\tmotor[port'+(port+1)+'] = vap_target['+targetIndex+'];');
+				writeLine('\t\tmotor[port'+(motor+1)+'] = vap_target['+targetIndex+'];');
 			}
 			targetIndex ++;
 		}
