@@ -19,8 +19,8 @@ function parse(config,frames) {
 	writeLine('**/');
 	writeLine();
 	writeLine('float vap_kP['+tunable.length+'], vap_kI['+tunable.length+'], vap_kD['+tunable.length+'], vap_kL['+tunable.length+'];');
-	writeLine('int vap_tolerance['+tunable.length+'];');
-	writeLine('int vap_ticksPerRotation, vap_ticksPerFoot;');
+	writeLine('long vap_tolerance['+tunable.length+'];');
+	writeLine('long vap_ticksPerRotation, vap_ticksPerFoot, vap_waitBetweenPID;');
 	writeLine();
 	writeLine('void vap_init() {');
 	writeLine();
@@ -35,6 +35,7 @@ function parse(config,frames) {
 	}
 	writeLine('\tvap_ticksPerRotation = 0; // Number of ticks per full rotation');
 	writeLine('\tvap_ticksPerFoot = 0; // Number of ticks per foot traveled');
+	writeLine('\tvap_waitBetweenPID = 0; // Number of milliseconds to wait after each PID move');
 	writeLine();
 	writeLine('}');
 	writeLine();
@@ -55,7 +56,7 @@ function parse(config,frames) {
 		}
 	}
 	var initTargetString = init.join(', ');
-	writeLine('int vap_target['+init.length+'] = {'+initTargetString+'};');
+	writeLine('long vap_target['+init.length+'] = {'+initTargetString+'};');
 	writeLine();
 	writeLine('task vap_pid() {');
 	writeLine();
@@ -206,6 +207,7 @@ function parse(config,frames) {
 					writeLine('\twhile(abs('+sensorName+' - vap_target['+targetIndex+']) > vap_tolerance['+tunableIndex+']);');
 				}
 			}
+			writeLine('\twait1Msec(vap_waitBetweenPID);');
 		}
 		if(keyframe['type'] == 'time') {
 			var targetName = getProperty(properties,'target',undefined);
