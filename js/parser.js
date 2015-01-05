@@ -20,7 +20,7 @@ function parse(config,frames) {
 	writeLine();
 	writeLine('float vap_kP['+tunable.length+'], vap_kI['+tunable.length+'], vap_kD['+tunable.length+'], vap_kL['+tunable.length+'];');
 	writeLine('int vap_tolerance['+tunable.length+'];');
-	writeLine('int vap_ticksPerRotation;');
+	writeLine('int vap_ticksPerRotation, vap_ticksPerFoot;');
 	writeLine();
 	writeLine('void vap_init() {');
 	writeLine();
@@ -34,6 +34,7 @@ function parse(config,frames) {
 		writeLine();
 	}
 	writeLine('\tvap_ticksPerRotation = 0; // Number of ticks per full rotation');
+	writeLine('\tvap_ticksPerFoot = 0; // Number of ticks per foot traveled');
 	writeLine();
 	writeLine('}');
 	writeLine();
@@ -182,12 +183,12 @@ function parse(config,frames) {
 				if(realComponent['type'] == 0) {
 					var action = getProperty(properties,'action','drive');
 					if(action == 'drive') {
-						writeLine('\tvap_target['+targetIndex+'] += '+value+';');
-						writeLine('\tvap_target['+(targetIndex+1)+'] += '+value+';');
+						writeLine('\tvap_target['+targetIndex+'] += '+value+'*vap_ticksPerFoot/12;');
+						writeLine('\tvap_target['+(targetIndex+1)+'] += '+value+'*vap_ticksPerFoot/12;');
 					}
 					if(action == 'turn') {
-						writeLine('\tvap_target['+targetIndex+'] += '+(value/360)+'*vap_ticksPerRotation;');
-						writeLine('\tvap_target['+(targetIndex+1)+'] -= '+(value/360)+'*vap_ticksPerRotation;');
+						writeLine('\tvap_target['+targetIndex+'] += '+(value/360)+'*vap_ticksPerRotation*vap_ticksPerFoot/12;');
+						writeLine('\tvap_target['+(targetIndex+1)+'] -= '+(value/360)+'*vap_ticksPerRotation*vap_ticksPerFoot/12;');
 					}
 					var encoderLeft = parseInt(realComponent['drive-encoder-left']);
 					var encoderRight = parseInt(realComponent['drive-encoder-right']);
