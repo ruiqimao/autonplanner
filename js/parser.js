@@ -30,7 +30,7 @@ function parse(config,frames) {
 		writeLine('\tvap_kI['+i+'] = 0.0; // Integral Constant for '+component['name']);
 		writeLine('\tvap_kD['+i+'] = 0.0; // Derivative Constant for '+component['name']);
 		writeLine('\tvap_kL['+i+'] = 0.0; // Integral Limit for '+component['name']);
-		writeLine('\tvap_tolerance['+i+'] = 0.0; // Tolerance for '+component['name']);
+		writeLine('\tvap_tolerance['+i+'] = 0; // Tolerance for '+component['name']);
 		writeLine();
 	}
 	writeLine('\tvap_ticksPerRotation = 0; // Number of ticks per full rotation');
