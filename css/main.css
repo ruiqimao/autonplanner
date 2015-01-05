@@ -154,6 +154,10 @@ select {
 	cursor:pointer;
 	margin-left:0.25rem;
 	margin-right:0.25rem;
+	-webkit-user-select:none;
+	-moz-user-select:none;
+	-ms-user-select:none;
+	user-select:none;
 }
 
 .option-close {
