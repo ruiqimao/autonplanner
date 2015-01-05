@@ -17,6 +17,7 @@ function parse(config,frames) {
 	writeLine('\tAll Rights Reserved');
 	writeLine();
 	writeLine('**/');
+	writeLine();
 	writeLine('float vap_kP['+tunable.length+'], vap_kI['+tunable.length+'], vap_kD['+tunable.length+'], vap_kL['+tunable.length+'];');
 	writeLine('int vap_tolerance['+tunable.length+'];');
 	writeLine('int vap_ticksPerRotation;');

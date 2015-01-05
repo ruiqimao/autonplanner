@@ -501,6 +501,7 @@ $(".keyframes-init-yoffset").on('change',function() {
 });
 
 function moveRobot() {
+	$(".keyframes-field-marker").remove();
 	var robot = $(".keyframes-field-robot");
     var rx = 0.0;
     var ry = 0.0;
@@ -543,6 +544,14 @@ function moveRobot() {
 					var value = getProperty(keyframe['properties'],'value',0);
 					if(action == 'drive') {
 						var angle = (rr-90)*Math.PI/180;
+						var direction = value>0?1:-1;
+						for(var j = 0; j < Math.abs(value); j += 4) {
+							var mx = rx + Math.cos(angle)*j*direction;
+							var my = ry + Math.sin(angle)*j*direction;
+							var marker = $('<div class="keyframes-field-marker"></div>');
+							marker.css({'left':(mx/144*100-1)+'%','top':(my/144*100-1)+'%'});
+							$(".keyframes-field-tiles").append(marker);
+						}
 						rx += Math.cos(angle)*value;
 						ry += Math.sin(angle)*value;
 					}else
@@ -641,19 +650,19 @@ $(".play-autonomous").click(function() {
 	$(".keyframes-left-overlay").fadeIn({'duration':200,'queue':false});
 	$(".keyframes-right-overlay").fadeIn(200);
 	$(".keyframes-components").empty();
+	$(".keyframes-field-marker").remove();
 	for(var i = 0; i < components.length; i ++) {
 		var component = components[i];
 		if(component['type'] > 0) {
 			$(".keyframes-components").append($('<h3>'+component['name']+'</h3>'));
 			var playbackComponent = $('<div class="keyframes-playback-component" id="c'+i+'"></div>');
 			if(component['type'] == 1) {
-				var min = undefined;
+				var min = 0;
 				var max = undefined;
 				for(var j = 0; j < keyframes.length; j ++) {
 					var keyframe = keyframes[j];
 					if(keyframe['type'] == 'pid' && getProperty(keyframe['properties'],'target',undefined) == component['name']) {
-						var value = getProperty(keyframe['properties'],'value',0);
-						if(min == undefined) min = value;
+						var value = parseInt(getProperty(keyframe['properties'],'value',0));
 						if(max == undefined) max = value;
 						if(value < min) min = value;
 						if(value > max) max = value;
@@ -840,7 +849,7 @@ function addOptionToBox(optionsGroup,index) {
 		if(index >= subOptions.length) index = 0;
 		$(this).data("index",index);
 		$(this).children().first().text(subOptions[index]);
-		saveComponents();
+		saveComponent();
 	});
 	newOption.append(newOptionClose);
 	optionsBox.append(newOption);

@@ -536,6 +536,14 @@ select {
 	transform:translateX(-50%) translateY(-50%);
 }
 
+.keyframes-field-marker {
+	position:absolute;
+	width:2%;
+	height:2%;
+	background:rgba(0,0,0,0.3);
+	border-radius:50%;
+}
+
 .keyframes-frames {
     width:100%;
     position:absolute;
@@ -739,6 +747,22 @@ select {
 
 .code-export-pane div:focus {
 	border:1px solid #2097CF;
+}
+
+.about-box {
+	position:absolute;
+	top:50%;
+	left:50%;
+	-webkit-transform:translateX(-50%) translateY(-50%);
+	-ms-transform:translateX(-50%) translateY(-50%);
+	transform:translateX(-50%) translateY(-50%);
+	font-family:Roboto;
+	font-size:0.9rem;
+	text-align:center;
+}
+
+.about-box h3 {
+	padding:0;
 }
 
 @media (max-width:960px) {
