@@ -72,11 +72,11 @@ function parse(config,frames) {
 		}
 	}
 	var errorString = error.join(', ');
-	writeLine('\tint error['+error.length+'] = {'+errorString+'};');
-	writeLine('\tint pError['+error.length+'] = {'+errorString+'};');
-	writeLine('\tint p['+error.length+'] = {'+errorString+'};');
-	writeLine('\tint i['+error.length+'] = {'+errorString+'};');
-	writeLine('\tint d['+error.length+'] = {'+errorString+'};');
+	writeLine('\tlong error['+error.length+'] = {'+errorString+'};');
+	writeLine('\tlong pError['+error.length+'] = {'+errorString+'};');
+	writeLine('\tlong p['+error.length+'] = {'+errorString+'};');
+	writeLine('\tlong i['+error.length+'] = {'+errorString+'};');
+	writeLine('\tlong d['+error.length+'] = {'+errorString+'};');
 	writeLine();
 	writeLine('\twhile(true) {');
 	writeLine();
