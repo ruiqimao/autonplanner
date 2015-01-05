@@ -99,6 +99,10 @@ select {
 	outline:1px solid rgba(255,0,0,0.2);
 }
 
+.toolbar-button.success {
+	outline:1px solid rgba(0,200,0,0.4);
+}
+
 .toolbar-button:hover {
 	background:#FCFCFC;
 }
@@ -673,6 +677,64 @@ select {
 	bottom:0;
 	background:#FAFAFA;
 	z-index:1;
+}
+
+.code-blank-pane {
+    background:#FFFFFF;
+    z-index:2;
+    position:absolute;
+    left:0;
+    right:0;
+    top:0;
+    bottom:0;
+    display:none;
+}
+
+.code-blank-pane span {
+    position:absolute;
+    top:50%;
+    left:50%;
+    -webkit-transform: translateX(-50%) translateY(-50%);
+    -ms-transform: translateX(-50%) translateY(-50%);
+    transform: translateX(-50%) translateY(-50%);
+    font-family:Roboto;
+    color:#666666;
+}
+
+.code-toolbar {
+	width:100%;
+	box-sizing:border-box;
+	height:3rem;
+	background:#F4F4F4;
+	border-bottom:2px solid rgba(0,0,0,0.05);
+	line-height:2.8rem;
+	padding-left:0.5rem;
+	padding-right:0.5rem;
+}
+
+.code-export-pane {
+	position:absolute;
+	top:3rem;
+	left:0;
+	right:0;
+	bottom:0;
+	padding:1rem;
+}
+
+.code-export-pane div {
+	padding:0.5rem;
+	font-size:0.9rem;
+	font-family:Monospace;
+	text-align:left;
+	font-weight:200;
+	width:100%;
+	height:100%;
+	border:1px solid #CFCFCF;
+	outline:none;
+}
+
+.code-export-pane div:focus {
+	border:1px solid #2097CF;
 }
 
 @media (max-width:960px) {

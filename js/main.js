@@ -1,3 +1,5 @@
+hljs.configure({useBR:true, tabReplace:'&nbsp;&nbsp;&nbsp;&nbsp;'});
+
 var options = {
 	'motor':['port1','port2','port3','port4','port5','port6','port7','port8','port9','port10'],
 	'digitalsensor':['Digital 1','Digital 2','Digital 3','Digital 4','Digital 5','Digital 6','Digital 7','Digital 8','Digital 9','Digital 10','Digital 11','Digital 12']};
@@ -805,6 +807,23 @@ function generateField() {
 	}
 }
 
+$(".donate-button").click(function() {
+	$(".donate-text").html("Thanks! &#9825;");
+	var pom = document.createElement('a');
+    pom.setAttribute('target','_blank');
+    pom.setAttribute('href','https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=KQUBH9BSXFYMY&lc=US&item_name=VEX%20Autonomous%20Planner&currency_code=USD&bn=PP%2dDonationsBF%3abtn_donate_LG%2egif%3aNonHosted');
+    pom.click();
+});
+
+$("#code-export-text").on('keydown',function(event) {
+	var allowedKeys = [33,34,37,38,39,40];
+	if(allowedKeys.indexOf(event.keyCode) > -1) return;
+	if(event.metaKey || event.ctrlKey) {
+		if(event.keyCode == 67 || event.keyCode == 65) return;
+	}
+	event.preventDefault();
+});
+
 function addOptionToBox(optionsGroup,index) {
 	var optionsBox = optionsGroup.children().first();
 	var optionType = optionsGroup.data("type");
@@ -869,6 +888,26 @@ function switchTab() {
 	}else
 	{
 		setTimeout(function() { $(".keyframes-no-drive").fadeOut({'duration':200,'queue':false}); }, 200);
+	}
+	if($(".tab.selected").index() == 2) {
+		var canExport = false;
+		for(var i = 0; i < components.length; i ++) {
+			if(components[i]['type'] == 0) canExport = true;
+		}
+		canExport = canExport && (keyframes.length > 1);
+		if(!canExport) {
+			$(".code-blank-pane").show();
+		}else
+		{
+			setTimeout(function() { $(".code-blank-pane").fadeOut({'duration':200,'queue':false}); }, 200);
+			$("#code-export-text").html(parse(components,keyframes));
+			$("#code-export-text").each(function(i,block) {
+				hljs.highlightBlock(block);
+			});
+		}
+	}else
+	{
+		setTimeout(function() { $(".code-blank-pane").fadeOut({'duration':200,'queue':false}); }, 200);
 	}
 }
 
