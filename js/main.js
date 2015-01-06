@@ -824,13 +824,6 @@ $(".donate-button").click(function() {
     pom.click();
 });
 
-$(".help-button").click(function() {
-	var pom = document.createElement('a');
-    pom.setAttribute('target','_blank');
-    pom.setAttribute('href','https://www.paypal.com/cgi-bin/webscr?cmd=_cart&business=KQUBH9BSXFYMY&lc=US&item_name=VAP%20Support&amount=5%2e00&currency_code=USD&button_subtype=products&tax_rate=0%2e000&shipping=0%2e00&add=1&bn=PP%2dShopCartBF%3abtn_cart_LG%2egif%3aNonHosted');
-    pom.click();
-});
-
 $("#code-export-text").on('keydown',function(event) {
 	var allowedKeys = [33,34,37,38,39,40];
 	if(allowedKeys.indexOf(event.keyCode) > -1) return;
