@@ -5,12 +5,12 @@ var options = {
 	'digitalsensor':['Digital 1','Digital 2','Digital 3','Digital 4','Digital 5','Digital 6','Digital 7','Digital 8','Digital 9','Digital 10','Digital 11','Digital 12']};
 
 var field = [
-	[0,0,0,0,3,0],
-	[0,0,0,0,0,4],
+	[0,3,0,0,4,0],
 	[0,0,0,0,0,0],
 	[0,0,0,0,0,0],
-	[1,0,0,0,0,0],
-	[0,2,0,0,0,0]
+	[0,0,0,0,0,0],
+	[0,0,0,0,0,0],
+	[0,1,0,0,2,0]
 ];
 
 var components = [];
@@ -510,23 +510,23 @@ function moveRobot() {
     var startingTile = getProperty(initProperties,'start',1);
     switch(startingTile) {
         case 1: {
-            rx = 12;
-            ry = 108;
+            rx = 36;
+            ry = 132;
             break;
         }
         case 2: {
-            rx = 36;
+            rx = 108;
             ry = 132;
 			break;
         }
 		case 3: {
-			rx = 108;
+			rx = 36;
 			ry = 12;
 			break;
 		}
 		case 4: {
-			rx = 132;
-			ry = 36;
+			rx = 108;
+			ry = 12;
 			break;
 		}
     }
@@ -692,23 +692,23 @@ $(".play-autonomous").click(function() {
      		var startingTile = getProperty(properties,'start',1);
      		switch(startingTile) {
     		    case 1: {
-    		        rx = 12;
-    		        ry = 108;
-    		        break;
-    		    }
-    		    case 2: {
     		        rx = 36;
     		        ry = 132;
     		        break;
     		    }
-    		    case 3: {
+    		    case 2: {
     		        rx = 108;
+    		        ry = 132;
+    		        break;
+    		    }
+    		    case 3: {
+    		        rx = 36;
     		        ry = 12;
         		    break;
         		}
         		case 4: {
-        		    rx = 132;
-        		    ry = 36;
+        		    rx = 108;
+        		    ry = 12;
         		    break;
         		}
     		}
